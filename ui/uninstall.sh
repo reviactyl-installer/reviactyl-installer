@@ -4,7 +4,7 @@ set -e
 
 ######################################################################################
 #                                                                                    #
-# Project 'pterodactyl-installer'                                                    #
+# Project 'reviactyl-installer'                                                    #
 #                                                                                    #
 # Copyright (C) 2018 - 2025, Vilhelm Prytz, <vilhelm@prytznet.se>                    #
 #                                                                                    #
@@ -21,10 +21,10 @@ set -e
 #   You should have received a copy of the GNU General Public License                #
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.           #
 #                                                                                    #
-# https://github.com/pterodactyl-installer/pterodactyl-installer/blob/master/LICENSE #
+# https://github.com/reviactyl-installer/reviactyl-installer/blob/master/LICENSE #
 #                                                                                    #
 # This script is not associated with the official Pterodactyl Project.               #
-# https://github.com/pterodactyl-installer/pterodactyl-installer                     #
+# https://github.com/reviactyl-installer/reviactyl-installer                     #
 #                                                                                    #
 ######################################################################################
 
@@ -46,7 +46,7 @@ export RM_WINGS=false
 main() {
   welcome ""
 
-  if [ -d "/var/www/pterodactyl" ]; then
+  if [ -d "/var/www/reviactyl" ]; then
     output "Panel installation has been detected."
     echo -e -n "* Do you want to remove panel? (y/N): "
     read -r RM_PANEL_INPUT
