@@ -4,7 +4,7 @@ set -e
 
 ######################################################################################
 #                                                                                    #
-# Project 'pterodactyl-installer'                                                    #
+# Project 'reviactyl-installer'                                                    #
 #                                                                                    #
 # Copyright (C) 2018 - 2025, Vilhelm Prytz, <vilhelm@prytznet.se>                    #
 #                                                                                    #
@@ -21,10 +21,10 @@ set -e
 #   You should have received a copy of the GNU General Public License                #
 #   along with this program.  If not, see <https://www.gnu.org/licenses/>.           #
 #                                                                                    #
-# https://github.com/pterodactyl-installer/pterodactyl-installer/blob/master/LICENSE #
+# https://github.com/reviactyl-installer/reviactyl-installer/blob/master/LICENSE #
 #                                                                                    #
 # This script is not associated with the official Pterodactyl Project.               #
-# https://github.com/pterodactyl-installer/pterodactyl-installer                     #
+# https://github.com/reviactyl-installer/reviactyl-installer                     #
 #                                                                                    #
 ######################################################################################
 
@@ -43,7 +43,7 @@ FQDN="${FQDN:-localhost}"
 
 # Default MySQL credentials
 MYSQL_DB="${MYSQL_DB:-panel}"
-MYSQL_USER="${MYSQL_USER:-pterodactyl}"
+MYSQL_USER="${MYSQL_USER:-reviactyl}"
 MYSQL_PASSWORD="${MYSQL_PASSWORD:-$(gen_passwd 64)}"
 
 # Environment
@@ -89,9 +89,9 @@ install_composer() {
 }
 
 ptdl_dl() {
-  output "Downloading pterodactyl panel files .. "
-  mkdir -p /var/www/pterodactyl
-  cd /var/www/pterodactyl || exit
+  output "Downloading reviactyl panel files .. "
+  mkdir -p /var/www/reviactyl
+  cd /var/www/reviactyl || exit
 
   curl -Lo panel.tar.gz "$PANEL_DL_URL"
   tar -xzvf panel.tar.gz
@@ -99,7 +99,7 @@ ptdl_dl() {
 
   cp .env.example .env
 
-  success "Downloaded pterodactyl panel files!"
+  success "Downloaded reviactyl panel files!"
 }
 
 install_composer_deps() {
@@ -174,7 +174,7 @@ insert_cronjob() {
 
   crontab -l | {
     cat
-    output "* * * * php /var/www/pterodactyl/artisan schedule:run >> /dev/null 2>&1"
+    output "* * * * php /var/www/reviactyl/artisan schedule:run >> /dev/null 2>&1"
   } | crontab -
 
   success "Cronjob installed!"
@@ -225,7 +225,7 @@ selinux_allow() {
 }
 
 php_fpm_conf() {
-  curl -o /etc/php-fpm.d/www-pterodactyl.conf "$GITHUB_URL"/configs/www-pterodactyl.conf
+  curl -o /etc/php-fpm.d/www-reviactyl.conf "$GITHUB_URL"/configs/www-reviactyl.conf
 
   systemctl enable php-fpm
   systemctl start php-fpm
@@ -368,7 +368,7 @@ configure_nginx() {
     CONFIG_PATH_ENABL="/etc/nginx/sites-enabled"
     ;;
   rocky | almalinux)
-    PHP_SOCKET="/var/run/php-fpm/pterodactyl.sock"
+    PHP_SOCKET="/var/run/php-fpm/reviactyl.sock"
     CONFIG_PATH_AVAIL="/etc/nginx/conf.d"
     CONFIG_PATH_ENABL="$CONFIG_PATH_AVAIL"
     ;;
@@ -376,15 +376,15 @@ configure_nginx() {
 
   rm -rf "$CONFIG_PATH_ENABL"/default
 
-  curl -o "$CONFIG_PATH_AVAIL"/pterodactyl.conf "$GITHUB_URL"/configs/$DL_FILE
+  curl -o "$CONFIG_PATH_AVAIL"/reviactyl.conf "$GITHUB_URL"/configs/$DL_FILE
 
-  sed -i -e "s@<domain>@${FQDN}@g" "$CONFIG_PATH_AVAIL"/pterodactyl.conf
+  sed -i -e "s@<domain>@${FQDN}@g" "$CONFIG_PATH_AVAIL"/reviactyl.conf
 
-  sed -i -e "s@<php_socket>@${PHP_SOCKET}@g" "$CONFIG_PATH_AVAIL"/pterodactyl.conf
+  sed -i -e "s@<php_socket>@${PHP_SOCKET}@g" "$CONFIG_PATH_AVAIL"/reviactyl.conf
 
   case "$OS" in
   ubuntu | debian)
-    ln -sf "$CONFIG_PATH_AVAIL"/pterodactyl.conf "$CONFIG_PATH_ENABL"/pterodactyl.conf
+    ln -sf "$CONFIG_PATH_AVAIL"/reviactyl.conf "$CONFIG_PATH_ENABL"/reviactyl.conf
     ;;
   esac
 
