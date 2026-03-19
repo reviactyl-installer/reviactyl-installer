@@ -2,32 +2,6 @@
 
 set -e
 
-######################################################################################
-#                                                                                    #
-# Project 'pterodactyl-installer'                                                    #
-#                                                                                    #
-# Copyright (C) 2018 - 2026, Vilhelm Prytz, <vilhelm@prytznet.se>                    #
-#                                                                                    #
-#   This program is free software: you can redistribute it and/or modify             #
-#   it under the terms of the GNU General Public License as published by             #
-#   the Free Software Foundation, either version 3 of the License, or                #
-#   (at your option) any later version.                                              #
-#                                                                                    #
-#   This program is distributed in the hope that it will be useful,                  #
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of                   #
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                    #
-#   GNU General Public License for more details.                                     #
-#                                                                                    #
-#   You should have received a copy of the GNU General Public License                #
-#   along with this program.  If not, see <https://www.gnu.org/licenses/>.           #
-#                                                                                    #
-# https://github.com/pterodactyl-installer/pterodactyl-installer/blob/master/LICENSE #
-#                                                                                    #
-# This script is not associated with the official Pterodactyl Project.               #
-# https://github.com/pterodactyl-installer/pterodactyl-installer                     #
-#                                                                                    #
-######################################################################################
-
 # Check if script is loaded, load if not or fail otherwise.
 fn_exists() { declare -F "$1" >/dev/null; }
 if ! fn_exists lib_loaded; then
@@ -43,7 +17,7 @@ FQDN="${FQDN:-localhost}"
 
 # Default MySQL credentials
 MYSQL_DB="${MYSQL_DB:-panel}"
-MYSQL_USER="${MYSQL_USER:-pterodactyl}"
+MYSQL_USER="${MYSQL_USER:-reviactyl}"
 MYSQL_PASSWORD="${MYSQL_PASSWORD:-$(gen_passwd 64)}"
 
 # Environment
@@ -89,9 +63,9 @@ install_composer() {
 }
 
 ptdl_dl() {
-  output "Downloading pterodactyl panel files .. "
-  mkdir -p /var/www/pterodactyl
-  cd /var/www/pterodactyl || exit
+  output "Downloading Reviactyl panel files .. "
+  mkdir -p /var/www/reviactyl
+  cd /var/www/reviactyl || exit
 
   curl -Lo panel.tar.gz "$PANEL_DL_URL"
   tar -xzvf panel.tar.gz
@@ -99,7 +73,7 @@ ptdl_dl() {
 
   cp .env.example .env
 
-  success "Downloaded pterodactyl panel files!"
+  success "Downloaded Reviactyl panel files!"
 }
 
 install_composer_deps() {
@@ -174,30 +148,30 @@ insert_cronjob() {
 
   crontab -l | {
     cat
-    output "* * * * php /var/www/pterodactyl/artisan schedule:run >> /dev/null 2>&1"
+    output "* * * * php /var/www/reviactyl/artisan schedule:run >> /dev/null 2>&1"
   } | crontab -
 
   success "Cronjob installed!"
 }
 
-install_pteroq() {
-  output "Installing pteroq service.."
+install_reviq() {
+  output "Installing reviq service.."
 
-  curl -o /etc/systemd/system/pteroq.service "$GITHUB_URL"/configs/pteroq.service
+  curl -o /etc/systemd/system/reviq.service "$GITHUB_URL"/configs/reviq.service
 
   case "$OS" in
   debian | ubuntu)
-    sed -i -e "s@<user>@www-data@g" /etc/systemd/system/pteroq.service
+    sed -i -e "s@<user>@www-data@g" /etc/systemd/system/reviq.service
     ;;
   rocky | almalinux)
-    sed -i -e "s@<user>@nginx@g" /etc/systemd/system/pteroq.service
+    sed -i -e "s@<user>@nginx@g" /etc/systemd/system/reviq.service
     ;;
   esac
 
-  systemctl enable pteroq.service
-  systemctl start pteroq
+  systemctl enable reviq.service
+  systemctl start reviq
 
-  success "Installed pteroq!"
+  success "Installed reviq!"
 }
 
 # -------- OS specific install functions ------- #
@@ -225,7 +199,7 @@ selinux_allow() {
 }
 
 php_fpm_conf() {
-  curl -o /etc/php-fpm.d/www-pterodactyl.conf "$GITHUB_URL"/configs/www-pterodactyl.conf
+  curl -o /etc/php-fpm.d/www-reviactyl.conf "$GITHUB_URL"/configs/www-reviactyl.conf
 
   systemctl enable php-fpm
   systemctl start php-fpm
@@ -368,7 +342,7 @@ configure_nginx() {
     CONFIG_PATH_ENABL="/etc/nginx/sites-enabled"
     ;;
   rocky | almalinux)
-    PHP_SOCKET="/var/run/php-fpm/pterodactyl.sock"
+    PHP_SOCKET="/var/run/php-fpm/reviactyl.sock"
     CONFIG_PATH_AVAIL="/etc/nginx/conf.d"
     CONFIG_PATH_ENABL="$CONFIG_PATH_AVAIL"
     ;;
@@ -376,15 +350,15 @@ configure_nginx() {
 
   rm -rf "$CONFIG_PATH_ENABL"/default
 
-  curl -o "$CONFIG_PATH_AVAIL"/pterodactyl.conf "$GITHUB_URL"/configs/$DL_FILE
+  curl -o "$CONFIG_PATH_AVAIL"/reviactyl.conf "$GITHUB_URL"/configs/$DL_FILE
 
-  sed -i -e "s@<domain>@${FQDN}@g" "$CONFIG_PATH_AVAIL"/pterodactyl.conf
+  sed -i -e "s@<domain>@${FQDN}@g" "$CONFIG_PATH_AVAIL"/reviactyl.conf
 
-  sed -i -e "s@<php_socket>@${PHP_SOCKET}@g" "$CONFIG_PATH_AVAIL"/pterodactyl.conf
+  sed -i -e "s@<php_socket>@${PHP_SOCKET}@g" "$CONFIG_PATH_AVAIL"/reviactyl.conf
 
   case "$OS" in
   ubuntu | debian)
-    ln -sf "$CONFIG_PATH_AVAIL"/pterodactyl.conf "$CONFIG_PATH_ENABL"/pterodactyl.conf
+    ln -sf "$CONFIG_PATH_AVAIL"/reviactyl.conf "$CONFIG_PATH_ENABL"/reviactyl.conf
     ;;
   esac
 
@@ -408,7 +382,7 @@ perform_install() {
   configure
   set_folder_permissions
   insert_cronjob
-  install_pteroq
+  install_reviq
   configure_nginx
   [ "$CONFIGURE_LETSENCRYPT" == true ] && letsencrypt
 

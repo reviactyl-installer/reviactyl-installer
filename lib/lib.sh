@@ -2,41 +2,15 @@
 
 set -e
 
-######################################################################################
-#                                                                                    #
-# Project 'pterodactyl-installer'                                                    #
-#                                                                                    #
-# Copyright (C) 2018 - 2026, Vilhelm Prytz, <vilhelm@prytznet.se>                    #
-#                                                                                    #
-#   This program is free software: you can redistribute it and/or modify             #
-#   it under the terms of the GNU General Public License as published by             #
-#   the Free Software Foundation, either version 3 of the License, or                #
-#   (at your option) any later version.                                              #
-#                                                                                    #
-#   This program is distributed in the hope that it will be useful,                  #
-#   but WITHOUT ANY WARRANTY; without even the implied warranty of                   #
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                    #
-#   GNU General Public License for more details.                                     #
-#                                                                                    #
-#   You should have received a copy of the GNU General Public License                #
-#   along with this program.  If not, see <https://www.gnu.org/licenses/>.           #
-#                                                                                    #
-# https://github.com/pterodactyl-installer/pterodactyl-installer/blob/master/LICENSE #
-#                                                                                    #
-# This script is not associated with the official Pterodactyl Project.               #
-# https://github.com/pterodactyl-installer/pterodactyl-installer                     #
-#                                                                                    #
-######################################################################################
-
 # ------------------ Variables ----------------- #
 
 # Versioning
 export GITHUB_SOURCE=${GITHUB_SOURCE:-master}
 export SCRIPT_RELEASE=${SCRIPT_RELEASE:-canary}
 
-# Pterodactyl versions
-export PTERODACTYL_PANEL_VERSION=""
-export PTERODACTYL_WINGS_VERSION=""
+# Reviactyl versions
+export REVIACTYL_PANEL_VERSION=""
+export REVIACTYL_WINGS_VERSION=""
 
 # Path (export everything that is possible, doesn't matter that it exists already)
 export PATH="$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin"
@@ -49,10 +23,10 @@ export ARCH=""
 export SUPPORTED=false
 
 # download URLs
-export PANEL_DL_URL="https://github.com/pterodactyl/panel/releases/latest/download/panel.tar.gz"
+export PANEL_DL_URL="https://github.com/reviactyl/panel/releases/latest/download/panel.tar.gz"
 export WINGS_DL_BASE_URL="https://github.com/pterodactyl/wings/releases/latest/download/wings_linux_"
 export MARIADB_URL="https://downloads.mariadb.com/MariaDB/mariadb_repo_setup"
-export GITHUB_BASE_URL=${GITHUB_BASE_URL:-"https://raw.githubusercontent.com/pterodactyl-installer/pterodactyl-installer"}
+export GITHUB_BASE_URL=${GITHUB_BASE_URL:-"https://raw.githubusercontent.com/reviactyl-installer/reviactyl-installer"}
 export GITHUB_URL="$GITHUB_BASE_URL/$GITHUB_SOURCE"
 
 # Colors
@@ -122,18 +96,17 @@ welcome() {
   get_latest_versions
 
   print_brake 70
-  output "Pterodactyl panel installation script @ $SCRIPT_RELEASE"
+  output "Reviactyl panel installation script @ $SCRIPT_RELEASE"
   output ""
-  output "Copyright (C) 2018 - 2026, Vilhelm Prytz, <vilhelm@prytznet.se>"
-  output "https://github.com/pterodactyl-installer/pterodactyl-installer"
+  output "https://github.com/reviactyl-installer/reviactyl-installer"
   output ""
-  output "This script is not associated with the official Pterodactyl Project."
+  output "This script is not associated with the official Reviactyl Project."
   output ""
   output "Running $OS version $OS_VER."
   if [ "$1" == "panel" ]; then
-    output "Latest pterodactyl/panel is $PTERODACTYL_PANEL_VERSION"
+    output "Latest reviactyl/panel is $REVIACTYL_PANEL_VERSION"
   elif [ "$1" == "wings" ]; then
-    output "Latest pterodactyl/wings is $PTERODACTYL_WINGS_VERSION"
+    output "Latest pterodactyl/wings is $REVIACTYL_WINGS_VERSION"
   fi
   print_brake 70
 }
@@ -148,8 +121,8 @@ get_latest_release() {
 
 get_latest_versions() {
   output "Retrieving release information..."
-  PTERODACTYL_PANEL_VERSION=$(get_latest_release "pterodactyl/panel")
-  PTERODACTYL_WINGS_VERSION=$(get_latest_release "pterodactyl/wings")
+  REVIACTYL_PANEL_VERSION=$(get_latest_release "reviactyl/panel")
+  REVIACTYL_WINGS_VERSION=$(get_latest_release "pterodactyl/wings")
 }
 
 update_lib_source() {
